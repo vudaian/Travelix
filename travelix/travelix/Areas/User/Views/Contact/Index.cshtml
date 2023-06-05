@@ -1,0 +1,130 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/User/Views/Shared/_LayoutContact.cshtml";
+}
+
+<div class="home">
+    <div class="home_background parallax-window" data-parallax="scroll"
+         style="background-image: url(/assets_user/images/contact_background.jpg)"></div>
+    <div class="home_content">
+        <div class="home_title">Liên hệ</div>
+    </div>
+</div>
+
+<!-- Contact -->
+
+<div class="contact_form_section">
+    <div class="container">
+        <div class="row">
+            <div class="col">
+
+                <!-- Contact Form -->
+                <div class="contact_form_container">
+                    <div class="contact_title text-center">thông tin liên hệ</div>
+                    <form action="#" id="contact_form" class="contact_form text-center">
+                        <input type="text" id="contact_form_name" class="contact_form_name input_field"
+                               placeholder="Tên khách hàng" required="required" data-error="Name is required.">
+                        <input type="email" id="contact_form_email" class="contact_form_email input_field"
+                               placeholder="E-mail" required="required" data-error="Email is required.">
+                        <textarea id="contact_form_message" class="text_field contact_form_message"
+                                  name="message" rows="4" placeholder="Phản hồi" required="required"
+                                  data-error="Please, write us a message."></textarea>
+                        <button type="submit" id="form_submit_button"
+                                class="form_submit_button button trans_200">
+                            Gửi
+                            <span></span><span></span><span></span>
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- About -->
+<div class="about">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-5">
+
+                <!-- About - Image -->
+
+                <div class="about_image">
+                    <img src="/assets_user/images/man.png" alt="">
+                </div>
+
+            </div>
+
+            <div class="col-lg-4">
+
+                <!-- About - Content -->
+
+                <div class="about_content">
+                    <div class="logo_container about_logo">
+                        <div class="logo">
+                            <a href="#">
+                                <img src="/assets_user/images/logo.png" alt="">Du lịch Đại
+                                An
+                            </a>
+                        </div>
+                    </div>
+                    <p class="about_text">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus quis
+                        vu lputate eros, iaculis consequat nisl. Nunc et suscipit urna. Integer eleme ntum orci
+                        eu vehicula iaculis consequat nisl. Nunc et suscipit urna pretium.
+                    </p>
+                    <ul class="about_social_list">
+                        <li class="about_social_item"><a href="#"><i class="fa fa-pinterest"></i></a></li>
+                        <li class="about_social_item"><a href="#"><i class="fa fa-facebook-f"></i></a></li>
+                        <li class="about_social_item"><a href="#"><i class="fa fa-twitter"></i></a></li>
+                        <li class="about_social_item"><a href="#"><i class="fa fa-dribbble"></i></a></li>
+                        <li class="about_social_item"><a href="#"><i class="fa fa-behance"></i></a></li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <div class="col-lg-3">
+
+                <!-- About Info -->
+
+                <div class="about_info">
+                    <ul class="contact_info_list">
+                        <li class="contact_info_item d-flex flex-row">
+                            <div>
+                                <div class="contact_info_icon">
+                                    <img src="/assets_user/images/placeholder.svg"
+                                         alt="">
+                                </div>
+                            </div>
+                            <div class="contact_info_text">4127 Raoul Wallenber 45b-c Gibraltar</div>
+                        </li>
+                        <li class="contact_info_item d-flex flex-row">
+                            <div>
+                                <div class="contact_info_icon">
+                                    <img src="/assets_user/images/phone-call.svg" alt="">
+                                </div>
+                            </div>
+                            <div class="contact_info_text">0398270233</div>
+                        </li>
+                        <li class="contact_info_item d-flex flex-row">
+                            <div>
+                                <div class="contact_info_icon">
+                                    <img src="/assets_user/images/message.svg" alt="">
+                                </div>
+                            </div>
+                            <div class="contact_info_text">
+                                <a href="#"
+                                   target="_top">mr.vuan24@gmail@gmail.com</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>

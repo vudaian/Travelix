@@ -1,0 +1,58 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/User/Views/Shared/_LayoutNewsDetail.cshtml";
+}
+
+<div class="home">
+    <div class="home_background parallax-window" data-parallax="scroll"
+         style="background-image: url(/assets_user/images/about_background.jpg)"></div>
+    <div class="home_content">
+        <div class="home_title">Chi tiết tin tức</div>
+    </div>
+</div>
+
+<!-- Intro -->
+
+<div class="intro">
+    <div class="container">
+        <div class="row renderNewsDetail">
+            
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        loadData();
+    });
+
+    var currentUrl = window.location.href;
+    var newsId = currentUrl.substring(currentUrl.lastIndexOf('/') + 1);
+
+    function loadData() {
+        $.ajax({
+            url: '/NewsDetail/GetNewsId',
+            data: { id: newsId },
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            success: function (resultNews) {
+                var data = '';
+                data += '<div class="col-lg-6">';
+                data += '<div class="intro_image"><img src="'+ resultNews.anh +'" alt="" style="width: 100%;"></div>';
+                data += '</div>';
+                data += '<div class="col-lg-1">';
+                data += '</div>';
+                data += '<div class="col-lg-5">';
+                data += '<div class="intro_content">';
+                data += '<div class="intro_title">'+ resultNews.tieuDe +'</div>';
+                data += '<p class="intro_text">'+ resultNews.noiDung +'</p>';
+                data += '</div>';
+                data += '</div>';
+                $('.renderNewsDetail').html(data);
+            }
+        });
+    }
+
+</script>

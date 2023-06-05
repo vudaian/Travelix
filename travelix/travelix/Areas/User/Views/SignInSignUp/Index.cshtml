@@ -1,0 +1,135 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/User/Views/Shared/_LayoutSignInSignUp.cshtml";
+}
+
+<div class="form-container sign-up-container">
+    <form role="form" id="SignUpForm" method="post">
+        <h3>Tạo tài khoản mới</h3>
+        <input type="email" class="Email" placeholder="Email" required />
+        <input type="password" class="MatKhau" placeholder="Mật khẩu" required />
+        <input type="text" id="TenKhachHang" placeholder="Tên khách hàng"  required />
+        <input type="text" id="SoDienThoai" placeholder="Số điện thoại"  required />
+        <input type="date" id="NgaySinh" placeholder="Ngày sinh"  required />
+        <button type="submit">Đăng ký</button>
+    </form>
+</div>
+
+<div class="form-container sign-in-container">
+    <form id="SignInForm" method="post">
+        <h3>Đăng nhập</h3>
+        <input type="email" id="Email" placeholder="Email" required/>
+        <input type="password" class="passwordInput" id="MatKhau" placeholder="Mật khẩu" required/>
+        <div class="form-group">
+            <input type="checkbox" class="form-input" id="showPasswordCheckbox">
+            <p>Hiểu thị mật khẩu</p>
+        </div>
+        <button type="submit">Đăng nhập</button>
+    </form>
+</div>
+
+<script type="text/javascript">
+    //Lấy tài khoản và mật khẩu quản lý nhập vào
+    document.getElementById("SignInForm").addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        var email = $("#Email").val();
+        var password = $("#MatKhau").val();
+
+        console.log(email);
+        console.log(password);
+        $.ajax({
+            url: "/SignInSignUp/SignIn",
+            type: "POST",
+            data: { email: email, password: password },
+            success: function (result) {
+                if (result.success) {
+                    $.ajax({
+                        type: "GET",
+                        url: "/SignInSignUp/Index",
+                        dataType: "json",
+                        success: function (response) {
+                            var returnUrl = response;
+                            console.log(returnUrl);
+                            if (returnUrl == null) {
+                                window.location.href = "/User/HomePage/Index";
+                            }
+                            else {
+                                window.location.href = returnUrl;
+                            }
+                        },
+                        error: function (error) {
+                            console.log(error);
+                        }
+                    });
+
+                } else {
+                    // Hiển thị thông báo sai mật khẩu
+                    alert("Tài khoản hoặc mật khẩu sai!");
+                }
+            },
+            error: function (e) {
+                // Hiển thị thông báo lỗi
+                console.log(e.responseText)
+            }
+        });
+    });
+
+
+    document.getElementById("SignUpForm").addEventListener("submit", function (event) {
+        event.preventDefault();
+        var email = $(".Email").val();
+            
+        $.ajax({
+            url: '/SignInSignUp/CheckCustomerExists',
+            type: 'GET',
+            dataType: 'JSON',
+            data: { email: email },
+            success: function (data) {
+                if (data) {
+                    alert("Tài khoản này đã tồn tại!");
+                } else {
+                    $.ajax({
+                        url: '/SignInSignUp/GetMaxUserId',
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function (data) {
+                            var customer = {
+                                IdKhachHang: data.idKhachHang + 1,
+                                TenKhachHang: $('#TenKhachHang').val(),
+                                SoDienThoai: $('#SoDienThoai').val(),
+                                NgaySinh: $('#NgaySinh').val(),
+                                Email: $('.Email').val(),
+                                MatKhau: $('.MatKhau').val(),
+                            };
+
+                            console.log(customer);
+
+                            $.ajax({
+                                url: '/Customer/Add',
+                                data: JSON.stringify(customer),
+                                type: 'POST',
+                                contentType: 'application/json;charset=utf-8',
+                                dataType: 'JSON',
+                                success: function (result) {
+                                    window.location.href = "/User/SignInSignUp/Index"
+                                },
+                                error: function (error) {
+                                    console.log('Đã xảy ra lỗi: ' + error.responseText);
+                                }
+                            });
+                        },
+                        error: function (e) {
+                            console.log(e.responseText);
+                        }
+                    });
+                }
+            },
+            error: function (e) {
+                alert(e.responseText);
+            }
+        });
+    });
+
+</script>

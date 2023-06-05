@@ -1,0 +1,285 @@
+﻿@model travelix.Model.Entities.Diadiem;
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Administrator/Views/Shared/_Layout.cshtml";
+}
+
+<main class="main-content position-relative max-height-vh-100 h-100 mt-1 border-radius-lg ">
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur" navbar-scroll="true">
+        <div class="container-fluid py-1 px-3">
+            <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
+                <div class="ms-md-auto pe-md-3 d-flex align-items-center">
+                    <div class="input-group">
+                        <span class="input-group-text text-body"><i class="fas fa-search" aria-hidden="true"></i></span>
+                        <input type="text" class="form-control" id="searchTerm" placeholder="Type here...">
+                    </div>
+                </div>
+                
+                <ul class="navbar-nav  justify-content-end">
+                    <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
+                        <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
+                            <div class="sidenav-toggler-inner">
+                                <i class="sidenav-toggler-line"></i>
+                                <i class="sidenav-toggler-line"></i>
+                                <i class="sidenav-toggler-line"></i>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card mb-4">
+                    <div class="card-header pb-0">
+                        <h6>Bảng địa danh</h6>
+                    </div>
+                    <div class="card-body px-0 pt-0 pb-2">
+                        <div class="table-responsive p-0">
+                            <table class="table align-items-center mb-0" style="table-layout: fixed;">
+                                <thead>
+                                    <tr>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Mã địa danh</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Tên địa danh</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Địa chỉ</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2"></th>
+                                    </tr>
+                                </thead>
+                                <tbody class="tbody">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div class="fixed-plugin">
+    <a class="fixed-plugin-button text-dark position-fixed px-3 py-2">
+        <i class="fa fa-plus py-2"> </i>
+    </a>
+</div>
+
+<div class="modal js-modal" id="tourModal" tabindex="-1">
+    <div class="modal-container js-modal-container">
+        <div class="modal-close js-modal-close">
+            <i class="fas fa-times"></i>
+        </div>
+        <header class="modal-header">
+            Thông tin địa danh
+        </header>
+        <form class="modal-body" id="modal_form">
+            <div class="row" id="hide_element">
+                <label class="col-sm-8 col-form-label">Mã địa danh</label>
+                <div class="">
+                    <input asp-for="IdDiaDiem" class="form-control ipt_id-address" required min="1" max="999999999" />
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-sm-8 col-form-label">Tên địa danh</label>
+                <div class="">
+                    <input asp-for="TenDiaDanh" class="form-control ipt_TenDiaDanh" required min="1" max="999999999" />
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-sm-8 col-form-label">Địa chỉ</label>
+                <div class="">
+                    <textarea asp-for="DiaChi" rows="3" class="form-control ipt_DiaChi" required></textarea>
+                </div>
+            </div>
+        </form>
+        <div class="modal-footer">
+            <button type="button" class="btn btn_form btn_Add" id="btn_add" data-bs-dismiss="modal" onclick="return add()">Lưu</button>
+            <button type="button" class="btn btn_form btn_Update" id="btn_update" data-bs-dismiss="modal" onclick="return update()">Cập nhật</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        $('#searchTerm').on('input', function () {
+            var searchTerm = $(this).val();
+
+            if (searchTerm.trim() === '') {
+                // Nếu ô input trống, load lại bảng gốc
+                loadData();
+                return;
+            }
+
+            searchCustomer(searchTerm);
+        });
+
+        function searchCustomer() {
+            var searchTerm = $('#searchTerm').val();
+
+            $.ajax({
+                url: '/Search/SearchAddress',
+                type: 'GET',
+                data: { searchTerm: searchTerm },
+                success: function (result) {
+                    if (result.length > 0) {
+                        var data = '';
+                        $.each(result, function (key, item) {
+                            data += '<tr>';
+                            data += '<td><p class="text-xs font-weight-bold mb-0">' + item.idDiaDiem + '</p></td>';
+                            data += '<td><p class="text-xs font-weight-bold mb-0">' + item.tenDiaDanh + '</p></td>';
+                            data += '<td class="showTextOnLine"><p class="text-xs font-weight-bold mb-0">' + item.diaChi + '</p></td>';
+                            data += '<td><a class="btn btn-link text-danger text-gradient px-3 mb-0" href="#" onclick="return getById(' + item.idDiaDiem + ')"><i class="fas fa-pencil-alt text-dark me-2" aria-hidden="true"></i>Edit</a><a class="btn btn-link text-danger text-gradient px-3 mb-0" href="#" onclick="return deleteCate(' + item.idDiaDiem + ')"><i class="far fa-trash-alt me-2"></i>Delete</a></td> ';
+                            data += '</tr>';
+                        });
+                        $('.tbody').html(data);
+                    } else {
+                        var noResultsRow = '<tr><td><p class="text-xs font-weight-bold mb-0">Không có kết quả.</p></td></tr>';
+                        $('.tbody').html(noResultsRow);
+                    }
+                }
+            });
+        }
+    });
+</script>
+
+<script type="text/javascript">
+
+    const add_active = document.getElementById('add_Active-address');
+    add_active.classList.add('active');
+
+    $(document).ready(function () {
+        loadData();
+    });
+
+    function loadData() {
+        $.ajax({
+            url: '/Address/List',
+            type: 'GET',
+            contentType: 'application/json;charset=utf-8',
+            dataType: 'JSON',
+            success: function (result) {
+                var data = '';
+                $.each(result, function (key, item) {
+                    data += '<tr>';
+                    data += '<td><p class="text-xs font-weight-bold mb-0">' + item.idDiaDiem + '</p></td>';
+                    data += '<td><p class="text-xs font-weight-bold mb-0">' + item.tenDiaDanh + '</p></td>';
+                    data += '<td class="showTextOnLine"><p class="text-xs font-weight-bold mb-0">' + item.diaChi + '</p></td>';
+                    data += '<td><a class="btn btn-link text-danger text-gradient px-3 mb-0" href="#" onclick="return getById(' + item.idDiaDiem + ')"><i class="fas fa-pencil-alt text-dark me-2" aria-hidden="true"></i>Edit</a><a class="btn btn-link text-danger text-gradient px-3 mb-0" href="#" onclick="return deleteCate(' + item.idDiaDiem + ')"><i class="far fa-trash-alt me-2"></i>Delete</a></td> ';
+                    data += '</tr>';
+                });
+                $('.tbody').html(data);
+            },
+            error: function (error) {
+                console.log("Error: " + error.responseText);
+            }
+        });
+    }
+
+    function add() {
+        var Address = {
+            IdDiaDiem: $('#IdDiaDiem').val(),
+            TenDiaDanh: $('#TenDiaDanh').val(),
+            DiaChi: $('#DiaChi').val(),
+        };
+
+        const inputIdAddressValue = document.querySelector('.ipt_id-address').value;
+        const inputTenDiaDanhValue = document.querySelector('.ipt_TenDiaDanh').value;
+        const inputDiaChiValue = document.querySelector('.ipt_DiaChi').value;
+
+        if (inputIdAddressValue === "" || inputTenDiaDanhValue === "" || inputDiaChiValue === "") {
+            alert("Các trường không được để trống!");
+        } else {
+            $.ajax({
+                url: "/Address/Add",
+                data: JSON.stringify(Address),
+                type: "POST",
+                contentType: 'application/json;charset=utf-8',
+                dataType: 'JSON',
+                success: function (result) {
+                    loadData();
+                    $("#tourModal").removeClass("open");
+                    $("#btn_update").removeClass("closeBtnUpdate");
+                    $('#IdDiaDiem').val("");
+                    $('#TenDiaDanh').val("");
+                    $('#DiaChi').val("");
+                },
+                error: function (error) {
+                    console.log("Error: " + error.responseText);
+                }
+            });
+        }
+    }
+
+    function getById(id) {
+        $.ajax({
+            url: "/Address/GetById",
+            data: { id: id },
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            success: function (result) {
+                $("#IdDiaDiem").val(result.idDiaDiem);
+                $("#TenDiaDanh").val(result.tenDiaDanh);
+                $("#DiaChi").val(result.diaChi);
+                //hiển thị modal
+                $("#tourModal").addClass("open");
+                $("#btn_add").addClass("closeBtnAdd");
+                $("#hide_element").addClass("d-none");
+            }
+        });
+    }
+
+    function update() {
+        //Lấy các giá trị trong textbox
+        var Address = {
+            IdDiaDiem: $('#IdDiaDiem').val(),
+            TenDiaDanh: $('#TenDiaDanh').val(),
+            DiaChi: $('#DiaChi').val(),
+        };
+
+        const inputIdAddressValue = document.querySelector('.ipt_id-address').value;
+        const inputTenDiaDanhValue = document.querySelector('.ipt_TenDiaDanh').value;
+        const inputDiaChiValue = document.querySelector('.ipt_DiaChi').value;
+
+        if (inputIdAddressValue === "" || inputTenDiaDanhValue === "" || inputDiaChiValue === "") {
+            alert("Các trường không được để trống!");
+        } else {
+            $.ajax({
+                url: "/Address/Update",
+                data: JSON.stringify(Address),
+                type: "POST",
+                dataType: "JSON",
+                contentType: "application/json;charset=utf-8",
+                success: function (result) {
+                    loadData();
+                    $("#tourModal").removeClass("open");
+                    $("#hide_element").removeClass("d-none");
+                    $("#btn_add").removeClass("closeBtnAdd");
+                    $('#IdDiaDiem').val("");
+                    $('#TenDiaDanh').val("");
+                    $('#DiaChi').val("");
+                }
+            });
+        }
+    }
+
+    function deleteCate(id) {
+        var ans = confirm("Bạn có chắc chắn xóa không?")
+        if (ans) {
+            $.ajax({
+                url: "/Address/Delete",
+                data: { id: id },
+                type: "GET",
+                contentType: "application/json;charset=utf-8",
+                dataType: "JSON",
+                success: function (result) {
+                    loadData();
+                },
+                error: function (e) {
+                    alert(e.responseText);
+                }
+            });
+        }
+    }
+</script>
+

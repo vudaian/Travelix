@@ -1,0 +1,162 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/User/Views/Shared/_LayoutNewsList.cshtml";
+}
+
+<!-- Home -->
+
+<div class="home">
+    <div class="home_background parallax-window" data-parallax="scroll"
+         style="background-image: url(/assets_user/images/blog_background.jpg);"></div>
+    <div class="home_content">
+        <div class="home_title">tin tức</div>
+    </div>
+</div>
+
+<!-- Blog -->
+
+<div class="blog">
+    <div class="container">
+        <div class="row">
+
+            <!-- Blog Content -->
+
+            <div class="col-lg-8">
+                <div class="blog_post_container showNewsList">
+
+                </div>
+                <div class="blog_navigation" id="pagination">
+
+                </div>
+            </div>
+
+            <div class="col-lg-4 sidebar_col">
+
+                <!-- Sidebar Latest Posts -->
+
+                <div class="sidebar_latest_posts">
+                    <div class="sidebar_title">Tin mới nhất</div>
+                    <div class="latest_posts_container">
+                        <ul>
+
+                            <li class="latest_post clearfix">
+                                <div class="latest_post_image" style="width: 70px; height: 70px; overflow: hidden;">
+                                    <a href="#"><img src="/assets_user/images/about_background.jpg" alt=""></a>
+                                </div>
+                                <div class="latest_post_content">
+                                    <div class="latest_post_title trans_200">
+                                        <a href="#">A simple blog post</a>
+                                    </div>
+                                    <div class="latest_post_meta">
+                                        <div class="latest_post_author trans_200">
+                                            <a href="#">by Jane Smith</a>
+                                        </div>
+                                        <div class="latest_post_date trans_200">
+                                            <a href="#">Aug 25, 2016</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+
+                        </ul>
+                    </div>
+                    
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    var currentPage = 1;
+    var pageSize = 3;
+
+    $(document).ready(function () {
+        loadData();
+    });
+
+    function loadData() {
+        $.ajax({
+            url: '/NewsList/List',
+            type: 'GET',
+            contentType: 'application/json;charset=utf-8',
+            dataType: 'JSON',
+            success: function (result) {
+
+                var pageCount = Math.ceil(result.length / pageSize);
+
+                if (currentPage < 1) {
+                    currentPage = 1;
+                } else if (currentPage > pageCount) {
+                    currentPage = pageCount;
+                }
+
+                var startIndex = (currentPage - 1) * pageSize;
+                var endIndex = startIndex + pageSize;
+                var currentTours = result.slice(startIndex, endIndex);
+
+                var data = '';
+                $.each(currentTours, function (key, item) {
+                    data += '<div class="blog_post">';
+                    data += '<div class="blog_post_image">';
+                    data += '<img src="'+item.anh+'" alt="">';
+                    data += '</div>';
+                    data += '<div class="blog_post_meta"></div>';
+                    data += '<div class="blog_post_title"><a href="#">' + item.tieuDe + '</a></div>';
+                    data += '<div class="blog_post_text"><p>'+item.noiDung+'</p>';
+                    data += '</div>';
+                    data += ' <div class="blog_post_link"><a href="/User/NewsDetail/Index/' + item.idTinTuc +'" onclick="UrlToSession(event)">Đọc thêm</a></div>';
+                    data += '</div>';
+                });
+                $('.showNewsList').html(data);
+
+                renderPagination(pageCount);
+            },
+            error: function (error) {
+                console.log("Error: " + error.responseText);
+            }
+        });
+    }
+
+    function renderPagination(pageCount) {
+        var pagination = $('#pagination');
+        pagination.empty();
+
+        for (var i = 1; i <= pageCount; i++) {
+            var button = $('<button class="blog_dot" style="margin-right: 10px; border-radius: 20px; width: 40px; height: 40px; border: 1px solid #ccc; background-color: #fff; outline: none;"><div></div> &nbsp;</button>').text(i);
+            if (i === currentPage) {
+                button.addClass('active');
+            }
+            pagination.append(button);
+        }
+    }
+
+    $('#pagination').on('click', 'button', function () {
+        currentPage = parseInt($(this).text());
+        loadData();
+    });
+
+    function UrlToSession(event) {
+        event.preventDefault();
+
+        var url = event.currentTarget.getAttribute("href");
+
+        $.ajax({
+            type: "POST",
+            url: "/SignInSignUp/SaveReturnUrlToSession",
+            data: { url: url },
+            success: function (response) {
+                console.log("URL saved to session");
+                window.location.href = url;
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    }
+
+</script>

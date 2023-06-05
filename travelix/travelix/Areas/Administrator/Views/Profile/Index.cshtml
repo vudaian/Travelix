@@ -1,0 +1,198 @@
+﻿@model travelix.Model.Entities.Quanly
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Administrator/Views/Shared/_Layout.cshtml";
+}
+
+<div class="main-content position-relative bg-gray-100 max-height-vh-100 h-100">
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur" navbar-scroll="true">
+        <div class="container-fluid py-1 px-3">
+            <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
+                <ul class="navbar-nav  justify-content-end">
+                    <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
+                        <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
+                            <div class="sidenav-toggler-inner">
+                                <i class="sidenav-toggler-line"></i>
+                                <i class="sidenav-toggler-line"></i>
+                                <i class="sidenav-toggler-line"></i>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container-fluid">
+        <div class="page-header min-height-300 border-radius-xl mt-4" style="background-image: url('/assets_admin/img/curved-images/curved0.jpg'); background-position-y: 50%;">
+            <span class="mask bg-gradient-primary opacity-6"></span>
+        </div>
+        <div class="card card-body blur shadow-blur mx-4 mt-n6 overflow-hidden">
+            <div class="row gx-4">
+                <div class="col-auto">
+                    <div class="avatar avatar-xl position-relative">
+                        <img src="~/assets_admin/img/icons8-admin-48.png" alt="profile_image" class="w-100 border-radius-lg shadow-sm">
+                    </div>
+                </div>
+                <div class="col-auto my-auto">
+                    <div class="h-100" id="renderName">
+                        <h5 class="mb-1">Alec Thompson</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12 col-xl-12">
+                <div class="card h-100">
+                    <div class="card-header pb-0 p-3">
+                        <div class="row">
+                            <div class="col-md-8 d-flex align-items-center">
+                                <h5 class="mb-0">Thông tin quản lý</h5>
+                            </div>
+                            <div class="col-md-4 text-end" id="renderBtnEdit">
+                                
+                            </div>
+                        </div>
+                        <hr>
+                    </div>
+                    <div class="card-body p-3" id="list_info">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal js-modal" id="profileModal">
+    <div class="modal-container js-modal-container">
+        <div class="modal-close js-modal-close">
+            <i class="fas fa-times"></i>
+        </div>
+        <header class="modal-header">
+            Thông tin quản lý
+        </header>
+        <form class="modal-body">
+            <div class="row">
+                <label class="col-sm-8 col-form-label">Tên quản lý</label>
+                <div class="">
+                    <input asp-for="TenQuanLy" class="form-control" />
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-sm-8 col-form-label">Số điện thoại</label>
+                <div class="">
+                    <input asp-for="SoDienThoai" class="form-control">
+                </div>
+            </div>
+            <div class="row">
+                <label for="inputPassword" class="col-sm-8 col-form-label">Email</label>
+                <div class="">
+                    <input type="email" required asp-for="Email" class="form-control">
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-sm-8 col-form-label">Địa chỉ</label>
+                <div class="">
+                    <input asp-for="DiaChi" class="form-control">
+                </div>
+            </div>
+        </form>
+        <div class="modal-footer" id="renderBtnUpdate">
+
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    const add_active = document.getElementById('add_Active-info');
+    add_active.classList.add('active');
+
+    $(document).ready(function () {
+        loadData();
+    });
+
+    function loadData() {
+        $.ajax({
+            url: "/Profile/GetQuanLyInfo",
+            type: "GET",
+            contentType: 'application/json;charset=utf-8',
+            dataType: "JSON",
+            success: function (result) {
+                var titleName = '';
+                titleName += '<h5 class="mb-1">' + result.tenQuanLy + '</h5>';
+                $('#renderName').html(titleName);
+
+                var btnUpdate = '';
+                btnUpdate += '<button type="button" class="btn btn_form" data-bs-dismiss="modal" onclick="return update(' + result.idQuanLy + ')">Cập nhật</button>';
+                $('#renderBtnUpdate').html(btnUpdate);
+
+                var btnEdit = '';
+                btnEdit += '<a href="#" onclick="return getById('+ result.idQuanLy +')">';
+                btnEdit += '<i class="fas fa-user-edit text-secondary text-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Profile"></i>';
+                btnEdit += '</a>';
+                $("#renderBtnEdit").html(btnEdit);
+
+                var data = '';
+                data += '<ul class="list-group">'
+                data += '<li class="list-group-item border-0 ps-0 text-sm" id="fullName"><b>Họ tên: &nbsp;</b>' + result.tenQuanLy + '</b></li>'
+                data += '<li class="list-group-item border-0 ps-0 text-sm" id="numberPhone"><b>Số điện thoại: &nbsp;</b>' + result.soDienThoai + '</b></li>'
+                data += '<li class="list-group-item border-0 ps-0 text-sm" id="email"><b>Email: &nbsp;</b>' + result.email + '</b></li>'
+                data += '<li class="list-group-item border-0 ps-0 text-sm" id="address"><b>Địa chỉ: &nbsp;</b>' + result.diaChi + '</b></li>'
+                data += '</ul>'
+                $("#list_info").html(data);
+            },
+            error: function (error) {
+                console.log("Error: " + error.responseText);
+            }
+        });
+    }
+
+    function getById(id) {
+        $.ajax({
+            url: "/Profile/GetById",
+            data: { id: id },
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            success: function (result) {
+                $("#TenQuanLy").val(result.tenQuanLy);
+                $("#SoDienThoai").val(result.soDienThoai);
+                $("#Email").val(result.email);
+                $("#DiaChi").val(result.diaChi);
+                //hiển thị modal
+                $("#profileModal").addClass("open");
+            }
+        });
+    }
+
+    function update(id) {
+        //Lấy các giá trị trong textbox
+        var admin = {
+            IdQuanLy: id,
+            TenQuanLy: $('#TenQuanLy').val(),
+            SoDienThoai: $('#SoDienThoai').val(),
+            Email: $('#Email').val(),
+            DiaChi: $('#DiaChi').val(),
+        };
+        $.ajax({
+            url: "/Profile/Update",
+            data: JSON.stringify(admin),
+            type: "POST",
+            dataType: "JSON",
+            contentType: "application/json;charset=utf-8",
+            success: function (result) {
+                loadData();
+                $("#profileModal").removeClass("open");
+                $('#TenQuanLy').val("");
+                $('#SoDienThoai').val("");
+                $('#Email').val("");
+                $('#DiaChi').val("");
+            }
+        });
+    }
+
+</script>

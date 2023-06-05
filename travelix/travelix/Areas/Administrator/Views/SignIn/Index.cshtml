@@ -1,0 +1,67 @@
+﻿@model travelix.Model.Entities.Taikhoanquanly
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Administrator/Views/Shared/_LayoutLogin.cshtml";
+}
+
+<div class="card-body">
+    <form role="form" id="loginForm" method="post">
+        <div class="mb-3 form-group">
+            <label>Tài khoản</label>
+            <input type="text" class="form-control" asp-for="TaiKhoan" placeholder="Tài khoản" required>
+        </div>
+        <div class="mb-3 form-group">
+            <label>Mật khẩu</label>
+            <input type="password" class="form-control passwordInput" asp-for="MatKhau" placeholder="Mật khẩu" required>
+        </div>
+        <div class="mb-3 form-group">
+            <input type="checkbox" id="showPasswordCheckbox">
+            <label>Hiển thị mật khẩu</label>
+        </div>
+        <button type="submit" class="btn bg-gradient-info w-100 mt-4 mb-0">Đăng nhập</button>
+    </form>
+</div>
+
+<script>
+    const passwordInput = document.querySelector(".passwordInput");
+    const showPasswordCheckbox = document.getElementById("showPasswordCheckbox");
+
+    showPasswordCheckbox.addEventListener("change", function () {
+        if (this.checked) {
+            passwordInput.type = "text";
+        } else {
+            passwordInput.type = "password";
+        }
+    });
+</script>
+
+<script type="text/javascript">
+
+    //Lấy tài khoản và mật khẩu quản lý nhập vào
+    $(document).ready(function () {
+        $("#loginForm").submit(function (event) {
+            event.preventDefault();
+            var acc = $("#TaiKhoan").val();
+            var password = $("#MatKhau").val();
+            $.ajax({
+                url: "/SignIn/Index",
+                type: "POST",
+                data: { username: acc, password: password },
+                success: function (result) {
+                    if (result.success) {
+                        // Chuyển hướng đến trang chính
+                        window.location.href = "/Administrator/Dashboard/Index";
+                    } else {
+                        // Hiển thị thông báo lỗi
+                        alert("Tài khoản hoặc mật khẩu sai!");
+                    }
+                },
+                error: function (e) {
+                    // Hiển thị thông báo lỗi
+                    console.log(e.responseText)
+                }
+            });
+        });
+    });
+    
+</script>

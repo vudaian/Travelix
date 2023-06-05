@@ -1,0 +1,302 @@
+﻿@model travelix.Model.Entities.Tintuc;
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Administrator/Views/Shared/_Layout.cshtml";
+}
+
+<main class="main-content position-relative max-height-vh-100 h-100 mt-1 border-radius-lg ">
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur" navbar-scroll="true">
+        <div class="container-fluid py-1 px-3">
+            <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
+                <div class="ms-md-auto pe-md-3 d-flex align-items-center">
+                    <div class="input-group">
+                        <span class="input-group-text text-body"><i class="fas fa-search" aria-hidden="true"></i></span>
+                        <input type="text" class="form-control" id="searchTerm" placeholder="Type here...">
+                    </div>
+                </div>
+
+                <ul class="navbar-nav  justify-content-end">
+                    <li class="nav-item d-xl-none ps-3 d-flex align-items-center">
+                        <a href="javascript:;" class="nav-link text-body p-0" id="iconNavbarSidenav">
+                            <div class="sidenav-toggler-inner">
+                                <i class="sidenav-toggler-line"></i>
+                                <i class="sidenav-toggler-line"></i>
+                                <i class="sidenav-toggler-line"></i>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container-fluid py-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card mb-4">
+                    <div class="card-header pb-0">
+                        <h6>Bảng tin tức</h6>
+                    </div>
+                    <div class="card-body px-0 pt-0 pb-2">
+                        <div class="table-responsive p-0">
+                            <table class="table align-items-center mb-0" style="table-layout: fixed;">
+                                <thead>
+                                    <tr>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Mã tin tức</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Tiêu đề</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Nội dung</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Ảnh</th>
+                                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2"></th>
+                                    </tr>
+                                </thead>
+                                <tbody class="tbody">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div class="fixed-plugin">
+    <a class="fixed-plugin-button text-dark position-fixed px-3 py-2">
+        <i class="fa fa-plus py-2"> </i>
+    </a>
+</div>
+
+<div class="modal js-modal" id="tourModal" tabindex="-1">
+    <div class="modal-container js-modal-container">
+        <div class="modal-close js-modal-close">
+            <i class="fas fa-times"></i>
+        </div>
+        <header class="modal-header">
+            Thông tin tin tức
+        </header>
+        <form class="modal-body" id="modal_form">
+            <div class="row" id="hide_element">
+                <label class="col-sm-8 col-form-label">Mã tin tức</label>
+                <div class="">
+                    <input asp-for="IdTinTuc" class="form-control ipt_id-News" required min="1" max="999999999" />
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-sm-8 col-form-label">Tên tiêu đề</label>
+                <div class="">
+                    <input asp-for="TieuDe" class="form-control ipt_TieuDe" required min="1" max="999999999" />
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-sm-8 col-form-label">Nội dung</label>
+                <div class="">
+                    <textarea asp-for="NoiDung" rows="5" class="form-control ipt_NoiDung" required></textarea>
+                </div>
+            </div>
+            <div class="row">
+                <label for="inputPassword" class="col-sm-8 col-form-label">Link ảnh</label>
+                <div class="">
+                    <textarea asp-for="Anh" rows="5" class="form-control ipt_Anh" required></textarea>
+                </div>
+            </div>
+        </form>
+        <div class="modal-footer">
+            <button type="button" class="btn btn_form btn_Add" id="btn_add" data-bs-dismiss="modal" onclick="return add()">Lưu</button>
+            <button type="button" class="btn btn_form btn_Update" id="btn_update" data-bs-dismiss="modal" onclick="return update()">Cập nhật</button>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+
+        $('#searchTerm').on('input', function () {
+            var searchTerm = $(this).val();
+
+            if (searchTerm.trim() === '') {
+                // Nếu ô input trống, load lại bảng gốc
+                loadData();
+                return;
+            }
+
+            searchCustomer(searchTerm);
+        });
+
+        function searchCustomer() {
+            var searchTerm = $('#searchTerm').val();
+
+            $.ajax({
+                url: '/Search/SearchNews',
+                type: 'GET',
+                data: { searchTerm: searchTerm },
+                success: function (result) {
+                    if (result.length > 0) {
+                        var data = '';
+                        $.each(result, function (key, item) {
+                            data += '<tr>';
+                            data += '<td><p class="text-xs font-weight-bold mb-0">' + item.idTinTuc + '</p></td>';
+                            data += '<td class="showTextOnLine"><p class="text-xs font-weight-bold mb-0">' + item.tieuDe + '</p></td>';
+                            data += '<td class="showTextOnLine"><p class="text-xs font-weight-bold mb-0">' + item.noiDung + '</p></td>';
+                            data += '<td class="showTextOnLine"><p class="text-xs font-weight-bold mb-0">' + item.anh + '</p></td>';
+                            data += '<td><a class="btn btn-link text-danger text-gradient px-3 mb-0" href="#" onclick="return getById(' + item.idTinTuc + ')"><i class="fas fa-pencil-alt text-dark me-2" aria-hidden="true"></i>Edit</a><a class="btn btn-link text-danger text-gradient px-3 mb-0" href="#" onclick="return deleteCate(' + item.idTinTuc + ')"><i class="far fa-trash-alt me-2"></i>Delete</a></td> ';
+                            data += '</tr>';
+                        });
+                        $('.tbody').html(data);
+                    } else {
+                        var noResultsRow = '<tr><td><p class="text-xs font-weight-bold mb-0">Không có kết quả.</p></td></tr>';
+                        $('.tbody').html(noResultsRow);
+                    }
+                }
+            });
+        }
+    });
+</script>
+
+<script type="text/javascript">
+
+    const add_active = document.getElementById('add_Active-news');
+    add_active.classList.add('active');
+
+    $(document).ready(function () {
+        loadData();
+    });
+
+    function loadData() {
+        $.ajax({
+            url: '/News/List',
+            type: 'GET',
+            contentType: 'application/json;charset=utf-8',
+            dataType: 'JSON',
+            success: function (result) {
+                var data = '';
+                $.each(result, function (key, item) {
+                    data += '<tr>';
+                    data += '<td><p class="text-xs font-weight-bold mb-0">' + item.idTinTuc + '</p></td>';
+                    data += '<td class="showTextOnLine"><p class="text-xs font-weight-bold mb-0">' + item.tieuDe + '</p></td>';
+                    data += '<td class="showTextOnLine"><p class="text-xs font-weight-bold mb-0">' + item.noiDung + '</p></td>';
+                    data += '<td class="showTextOnLine"><p class="text-xs font-weight-bold mb-0">' + item.anh + '</p></td>';
+                    data += '<td><a class="btn btn-link text-danger text-gradient px-3 mb-0" href="#" onclick="return getById(' + item.idTinTuc + ')"><i class="fas fa-pencil-alt text-dark me-2" aria-hidden="true"></i>Edit</a><a class="btn btn-link text-danger text-gradient px-3 mb-0" href="#" onclick="return deleteCate(' + item.idTinTuc + ')"><i class="far fa-trash-alt me-2"></i>Delete</a></td> ';
+                    data += '</tr>';
+                });
+                $('.tbody').html(data);
+            },
+            error: function (error) {
+                console.log("Error: " + error.responseText);
+            }
+        });
+    }
+
+    function add() {
+        var News = {
+            IdNews: $('#IdTinTuc').val(),
+            TieuDe: $('#TieuDe').val(),
+            NoiDung: $('#NoiDung').val(),
+            Anh: $('#Anh').val(),
+        };
+
+        const inputIdNewsValue = document.querySelector('.ipt_id-News').value;
+        const inputTieuDeValue = document.querySelector('.ipt_TieuDe').value;
+        const inputNoiDungValue = document.querySelector('.ipt_NoiDung').value;
+        const inputAnhValue = document.querySelector('.ipt_Anh').value;
+
+        if (inputIdNewsValue === "" || inputTieuDeValue === "" || inputNoiDungValue === "" || inputAnhValue === "") {
+            alert("Các trường không được để trống!");
+        } else {
+            $.ajax({
+                url: "/News/Add",
+                data: JSON.stringify(News),
+                type: "POST",
+                contentType: 'application/json;charset=utf-8',
+                dataType: 'JSON',
+                success: function (result) {
+                    loadData();
+                    $("#tourModal").removeClass("open");
+                    $("#btn_update").removeClass("closeBtnUpdate");
+                    $('#IdTinTuc').val("");
+                    $('#TieuDe').val("");
+                    $('#NoiDung').val("");
+                    $('#Anh').val("");
+                },
+                error: function (error) {
+                    console.log("Error: " + error.responseText);
+                }
+            });
+        }
+    }
+
+    function getById(id) {
+        $.ajax({
+            url: "/News/GetById",
+            data: { id: id },
+            type: "GET",
+            contentType: "application/json;charset=utf-8",
+            success: function (result) {
+                $("#IdTinTuc").val(result.idTinTuc);
+                $("#TieuDe").val(result.tieuDe);
+                $("#NoiDung").val(result.noiDung);
+                $("#Anh").val(result.anh);
+                //hiển thị modal
+                $("#tourModal").addClass("open");
+                $("#btn_add").addClass("closeBtnAdd");
+                $("#hide_element").addClass("d-none");
+            }
+        });
+    }
+
+    function update() {
+        //Lấy các giá trị trong textbox
+        var News = {
+            IdNews: $('#IdTinTuc').val(),
+            TieuDe: $('#TieuDe').val(),
+            NoiDung: $('#NoiDung').val(),
+            Anh: $('#Anh').val(),
+        };
+
+        const inputIdNewsValue = document.querySelector('.ipt_id-News').value;
+        const inputTieuDeValue = document.querySelector('.ipt_TieuDe').value;
+        const inputNoiDungValue = document.querySelector('.ipt_NoiDung').value;
+        const inputAnhValue = document.querySelector('.ipt_Anh').value;
+
+        if (inputIdNewsValue === "" || inputTieuDeValue === "" || inputNoiDungValue === "" || inputAnhValue === "") {
+            alert("Các trường không được để trống!");
+        } else {
+            $.ajax({
+                url: "/News/Update",
+                data: JSON.stringify(News),
+                type: "POST",
+                dataType: "JSON",
+                contentType: "application/json;charset=utf-8",
+                success: function (result) {
+                    loadData();
+                    $("#tourModal").removeClass("open");
+                    $("#hide_element").removeClass("d-none");
+                    $("#btn_add").removeClass("closeBtnAdd");
+                    $('#IdTinTuc').val("");
+                    $('#TieuDe').val("");
+                    $('#NoiDung').val("");
+                    $('#Anh').val("");;
+                }
+            });
+        }
+    }
+
+    function deleteCate(id) {
+        var ans = confirm("Bạn có chắc chắn xóa không?")
+        if (ans) {
+            $.ajax({
+                url: "/News/Delete",
+                data: { id: id },
+                type: "GET",
+                contentType: "application/json;charset=utf-8",
+                dataType: "JSON",
+                success: function (result) {
+                    loadData();
+                },
+                error: function (e) {
+                    alert(e.responseText);
+                }
+            });
+        }
+    }
+</script>
+
