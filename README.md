@@ -17,4 +17,12 @@
 > - Database: SQL Server
 
 ## Hình ảnh minh họa
-![](../Img/loginUser.png)
+![](https://github.com/vudaian/Travelix/blob/master/travelix/travelix/wwwroot/assets_user/Screenshot%20(18).png?raw=true)
+![https://github.com/vudaian/Travelix/blob/master/travelix/travelix/wwwroot/assets_user/loginUser.png?raw=true]
+![https://github.com/vudaian/Travelix/blob/master/travelix/travelix/wwwroot/assets_user/Screenshot%20(19).png?raw=true]
+![https://github.com/vudaian/Travelix/blob/master/travelix/travelix/wwwroot/assets_user/Screenshot%20(20).png?raw=true]
+![https://github.com/vudaian/Travelix/blob/master/travelix/travelix/wwwroot/assets_user/Screenshot%20(21).png?raw=true]
+![https://github.com/vudaian/Travelix/blob/master/travelix/travelix/wwwroot/assets_user/Screenshot%20(22).png?raw=true]
+![https://github.com/vudaian/Travelix/blob/master/travelix/travelix/wwwroot/assets_user/Screenshot%20(23).png?raw=true]
+![https://github.com/vudaian/Travelix/blob/master/travelix/travelix/wwwroot/assets_user/Screenshot%20(24).png?raw=true]
+![https://github.com/vudaian/Travelix/blob/master/travelix/travelix/wwwroot/assets_user/Screenshot%20(25).png?raw=true]
